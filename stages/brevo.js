@@ -12,7 +12,7 @@ async function sendEmails(contacts) {
         {
           sender: {
             name: 'Joshini',
-            email: 'joshini642@gmail.com'
+            email:'joshini@autopitch.site'
           },
           to: [{ email: contact.email, name: contact.name }],
           subject: `Hi from a student developer!`,
