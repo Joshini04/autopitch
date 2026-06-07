@@ -29,7 +29,7 @@ async function main() {
       return;
     }
 
-    const contactsWithEmails = await getEmails(contacts);
+    let  contactsWithEmails = await getEmails(contacts);
     if (contactsWithEmails.length === 0) {
       console.log('❌ No emails found. Exiting.');
       return;
@@ -45,14 +45,23 @@ async function main() {
       output: process.stdout
     });
 
-    rl2.question('\nProceed with sending emails? (yes/no): ', async (answer) => {
-      rl2.close();
-      if (answer.toLowerCase() === 'yes') {
-        await sendEmails(contactsWithEmails);
-        console.log('\n🎉 AutoPitch pipeline completed successfully!');
-      } else {
-        console.log('❌ Email sending cancelled.');
+    rl2.question('\nEnter numbers to REMOVE (e.g. 1,3,5) or press Enter to keep all: ', async (removeInput) => {
+      
+      if (removeInput.trim()) {
+        const toRemove = removeInput.split(',').map(n => parseInt(n.trim()) - 1);
+        contactsWithEmails = contactsWithEmails.filter((_, i) => !toRemove.includes(i));
+        console.log(`\n✅ Keeping ${contactsWithEmails.length} contacts after removal.`);
       }
+
+      rl2.question('\nProceed with sending emails? (yes/no): ', async (answer) => {
+        rl2.close();
+        if (answer.toLowerCase() === 'yes') {
+          await sendEmails(contactsWithEmails);
+          console.log('\n🎉 AutoPitch pipeline completed successfully!');
+        } else {
+          console.log('❌ Email sending cancelled.');
+        }
+      });
     });
   });
 }
